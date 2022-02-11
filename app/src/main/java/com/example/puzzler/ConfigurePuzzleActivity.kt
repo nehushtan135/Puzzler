@@ -2,10 +2,14 @@ package com.example.puzzler
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.AdapterView
 import android.widget.GridView
-import com.example.puzzler.databinding.ActivityPuzzleSelectionBinding
+import android.widget.Toast
+import com.example.puzzler.databinding.ActivityConfigurePuzzleBinding
 
 class ConfigurePuzzleActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityConfigurePuzzleBinding
 
     lateinit var gridView:GridView
     val puzzlePics = arrayOf("Custom Picture","Flower","Bolt", "Wheat", "Flag","White FLower")
@@ -13,11 +17,20 @@ class ConfigurePuzzleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_configure_puzzle)
-        gridView = findViewById(R.id.gridView)
-        gridView = findViewById(R.id.gridView)
-        val mainAdapter = GridAdapter(this@ConfigurePuzzleActivity, puzzlePics, imageVals)
-        gridView.adapter = mainAdapter
+        binding = ActivityConfigurePuzzleBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupGridView()
+
+    }
+    private fun setupGridView(){
+        val adapter = GridAdapter(this,puzzlePics,R.drawable.icons8_camera_96)
+        binding.gridView.adapter = adapter
+        binding.gridView.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, v, position, id ->
+                Toast.makeText(this, " Clicked Position: " + (position + 1),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
     }
 }

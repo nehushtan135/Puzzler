@@ -4,37 +4,44 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
+import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
-class GridAdapter(var context: Context, var puzzlePics: Array<String>, var image: IntArray) :
-    BaseAdapter() {
-    private var inflater: LayoutInflater? = null
-    private lateinit var imageButton: ImageButton
-    private lateinit var textView: TextView
+import com.example.puzzler.databinding.GridItemBinding
+
+internal class GridAdapter internal constructor
+    ( context: Context,
+     private var puzzlePics: Array<String>,
+     private var image: Int) :
+    ArrayAdapter<GridAdapter.ItemViewHolder>(context,image) {
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private lateinit var itemBinding: GridItemBinding
+
+
     override fun getCount(): Int {
-        return puzzlePics.size
+        return if (this.puzzlePics != null) this.puzzlePics.size else 0
     }
-
-    override fun getItem(i: Int): Any? {
-        return null
-    }
-
-    override fun getItemId(i: Int): Long {
-        return 0
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
-        var convertView = convertView
-        if (inflater == null) inflater =
-            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
+        var convertView = view
+        val holder: ItemViewHolder
         if (convertView == null) {
-            convertView = inflater!!.inflate(R.layout.grid_item, null)
+            itemBinding = GridItemBinding.inflate(inflater)
+            convertView = itemBinding.root
+            holder = ItemViewHolder()
+            holder.name = itemBinding.itemName
+            holder.icon = itemBinding.gridButton
+            convertView.tag = holder
         }
-        val imageButton = convertView!!.findViewById<ImageButton>(R.id.grid_button)
-        val textview = convertView.findViewById<TextView>(R.id.item_name)
-        imageButton.setImageResource(image[position])
-        textview.text = puzzlePics[position]
+        else{
+            holder = convertView.tag as ItemViewHolder
+        }
+        holder.name!!.text = this.puzzlePics!![position]
+        holder.icon!!.setImageResource(image)
         return convertView
     }
+    internal class ItemViewHolder{
+        var name: TextView? = null
+        var icon: ImageButton? = null
+    }
+
 }
